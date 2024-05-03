@@ -32,6 +32,7 @@ def not_blank(question, error):
 
 # Currency formatting function
 def currency(x):
+    return "${:.2f}".format(x)
 
 
 # main routine starts here
@@ -64,13 +65,13 @@ while item_name.lower() != "xxx":
     if item_name.lower() == "xxx":
         break
 
-    quantity = num_check("Quantity:",
+    quantity = num_check("Quantity: ",
                          "The amount must be a whole number"
                          " more than zero. ",
                          int)
     price = num_check("How much for a single item? $",
-                      "The price can't be a number <more"
-                      " than 0>",
+                      "The price can't be a number more"
+                      " than 0",
                       float)
 
     # add item, quantity and price to lists
@@ -82,4 +83,20 @@ variable_frame = pandas.DataFrame(variable_dict)
 variable_frame = variable_frame.set_index('Item')
 
 # Calculate the cost of each component
-variable_frame["Cost"] = variable_frame
+variable_frame['Cost'] = variable_frame['Quantity'] * variable_frame['Price']
+
+# Find subtotal
+variable_sub = variable_frame['Cost'].sum()
+
+# Currency formatting (uses currency function)
+add_dollars = ['Price', 'Cost']
+for item in add_dollars:
+    variable_frame[item] = variable_frame[item].apply(currency)
+
+# Printing area
+
+print(variable_frame)
+
+print()
+
+print("Variable Costs: ${:.2f}".format(variable_sub))
